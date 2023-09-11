@@ -1,0 +1,47 @@
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+import matplotlib.pyplot as plt
+from scipy import stats
+
+# Read data 
+df1 = pd.read_csv("hemnet.csv")
+plt.scatter(df1["Living_area"],df1["Selling_price"])
+
+#Create Linear Regresion
+x = df1["Living_area"].values.reshape(-1, 1)
+y = df1["Selling_price"].values
+model = LinearRegression()
+model.fit(x, y)
+plt.plot(x, model.predict(x), color='red', label="Raw Linear regression")
+
+#Calculate the residual error of the raw data
+predicted_values = model.predict(x)
+residuals = y - predicted_values
+
+# Boxplot to visualize the outlier points
+"""plt.figure(figsize=(8, 6))
+plt.boxplot(residuals, vert=False)
+plt.title('Residuals Boxplot')
+plt.xlabel('Residuals')
+plt.show()"""
+
+#Clean data
+cleaned_data = df1[~df1['ID'].isin([41, 46])]
+
+#New regression line
+x_cleaned = cleaned_data['Living_area'].values.reshape(-1, 1)
+y_cleaned = cleaned_data['Selling_price'].values
+model_cleaned = LinearRegression()
+model_cleaned.fit(x_cleaned, y_cleaned)
+plt.plot(x_cleaned, model_cleaned.predict(x_cleaned), 'g', label="Cleaned Linear regression")
+
+# Quesion 1: Scatter plot to see the data 
+plt.xlabel("Living area")
+plt.ylabel("Selling price [$]")
+plt.title("Living area VS Selling price")
+
+model_cleaned = LinearRegression()
+model_cleaned.fit(x_cleaned, y_cleaned)
+plt.legend()
+plt.show()
